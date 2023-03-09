@@ -42,7 +42,19 @@ class AdminController extends Controller
     }
 
     public function edit(Request $request, $id) {
-        $choices = Question::find($id)->choices;
+        if (empty(Question::find($id))) {
+            abort(404); // Not Foundページを表示
+        }else {
+            $choices = Question::find($id)->choices;
+        }
+    
+            $request->validate([
+            'name0'=> ['required', 'max:20'],
+            'name1'=> ['required', 'max:20'],
+            'name2'=> ['required', 'max:20'],
+            'valid'=> ['required', 'numeric', 'min:0', 'max:2'],
+            ]);
+        
         foreach ($choices as $index => $choice) {
             $choice->name = $request->{'name'.$index};
             if ($index === intval($request->valid)) {
